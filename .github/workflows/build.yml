@@ -1,0 +1,70 @@
+name: Build
+on: [push]
+
+jobs:
+  win:
+    runs-on: windows-2022
+    name: Windows
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install SDK
+        id: install_sdk
+        uses: WerWolv/imhex-download-sdk@v1.32.2
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          IMHEX_SDK_PATH="${{ steps.install_sdk.outputs.sdk_path }}"      \
+            cmake -G Ninja                                                \
+            -DCMAKE_BUILD_TYPE=Release                                    \
+            -DCMAKE_INSTALL_PREFIX="./install"                            \
+            ..
+          cmake --build .
+          cmake --install .
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/install
+  macos:
+    runs-on: macos-12
+    name: MacOS
+    defaults:
+      run:
+        shell: bash {0}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install SDK
+        id: install_sdk
+        uses: WerWolv/imhex-download-sdk@v1.32.2
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          CC=$(brew --prefix gcc@12)/bin/gcc-12                                                         \
+          CXX=$(brew --prefix gcc@12)/bin/g++-12                                                        \
+          OBJC=$(brew --prefix llvm)/bin/clang                                                          \
+          OBJCXX=$(brew --prefix llvm)/bin/clang++                                                      \
+          PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig":"$(brew --prefix)/lib/pkgconfig"     \
+          IMHEX_SDK_PATH="${{ steps.install_sdk.outputs.sdk_path }}"                                    \
+            cmake                                                                                       \
+            -G Ninja                                                                                    \
+            -DCMAKE_BUILD_TYPE=Release                                                                  \
+            -DCMAKE_INSTALL_PREFIX="./install"                                                          \
+            ..
+          cmake --build .
+          cmake --install .
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: build/install
