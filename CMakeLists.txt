@@ -59,4 +59,6 @@ add_imhex_plugin(
         example_plugin
     SOURCES
         source/example_plugin.cpp
+    INCLUDES
+        include
 )
