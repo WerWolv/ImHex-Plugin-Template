@@ -13,3 +13,7 @@ The Plugin basically consists of three parts: The cmake build script, the GitHub
     - These folders contain all your source code. The `example_plugin.cpp` file contains the entry point for your Plugin
 - `romfs/`: Resource files
     - ImHex Plugins have access to a system called the `romfs`. All files you place in this folder are bundled into your plugin and you can access them using the `romfs::` functions.
+
+ ## License Information
+
+ The code in this template can be licensed under any license the user chooses to do so. 
