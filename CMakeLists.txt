@@ -33,6 +33,7 @@
 #   feature:    The name of the feature to enable
 
 cmake_minimum_required(VERSION 3.20)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 project(ImHexPlugin)
 
 # Include the ImHex SDK
@@ -41,14 +42,7 @@ project(ImHexPlugin)
 # On Windows, the SDK is next to the ImHex executable
 # On Linux, the SDK is usually in /usr/share/imhex/sdk but this may vary depending on your distribution
 # On MacOS, the SDK is located inside of the ImHex.app bundle under ImHex.app/Contents/Resources/sdk
-if (NOT DEFINED ENV{IMHEX_SDK_PATH})
-    message(FATAL_ERROR "The IMHEX_SDK_PATH environment variable is not set")
-elseif ($ENV{IMHEX_SDK_PATH} STREQUAL "")
-    message(FATAL_ERROR "The IMHEX_SDK_PATH environment variable is set but empty")
-elseif (NOT EXISTS $ENV{IMHEX_SDK_PATH})
-    message(FATAL_ERROR "The IMHEX_SDK_PATH environment variable doesn't contain a valid path")
-endif()
-add_subdirectory($ENV{IMHEX_SDK_PATH} ImHexSDK)
+include(ImHexSDK)
 
 # Register the plugin
 # This will configure everything you need to make your plugin work
